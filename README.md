@@ -79,7 +79,22 @@ index                                        = colorKmeans(clusterCount, svMeans
 * Step 3: Cluster-level manipulation of the initial results. The function manipulateClusters.m can be used multiple times. retainLargeClumps.m removes small, disconnected
 supervoxels in individual clusters because they are more likely to represent mistakes. The remaining 'cleaned-up' clusters can be used as seed clusters in further clustering.
 
-- Example: remove cluster 5, split clusters 1 and 9 into 2, merge clusters 15 and 16, and merge clusters 13 and 18.
+Example 1: remove cluster 5, split clusters 1 and 9 into 2, merge clusters 15 and 16, and merge clusters 13 and 18.
 
----manipulationSets.removalSet = [5]; manipulationSets.splitSet = [1 9]; manipulationSets.splitCount = 2; manipulationSets.mergeSets = {[15 16], [13 18]}; 
----index = snrAwareUserInteraction(index, manipulationSets, graphData.colorData, opts_fkmeans);
+manipulationSets.removalSet = [5]; manipulationSets.splitSet = [1 9]; manipulationSets.splitCount = 2; manipulationSets.mergeSets = {[15 16], [13 18]}; 
+index = manipulateClusters(index, manipulationSets, graphData.colorData, opts_fkmeans);
+
+Example 2: remove the small supervoxels ('dust') whose identity may be hard to pinpoint. It can be used on a subset of the clusters and with different parameters.
+
+index = retainLargeClumps(square_sAff, index, graphData.minClumpCount, graphData.minSVcountFraction, 1:max(index));
+
+* Step 4: Choose seed points. After cleaning up and making sure that the remaining subset of supervoxels are correctly clustered, they can be used as seed points to initialize the next step.
+
+for kk = 1:max(index)
+  seedSets{kk}                               = find(index==kk);
+end
+graphData.seedSets                           = seedSets;
+graphData.ccIDsOfSVs                         = indexUI;
+
+* Step 5: Obtain a spectral clustering of the supervoxels. If seed points are indicated, they will be respected by the clustering.
+[index, scoreInf, score1] = calculateNormalizedCuts_mem(graphData);
