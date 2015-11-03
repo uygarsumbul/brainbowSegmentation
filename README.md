@@ -79,10 +79,7 @@ index                                        = colorKmeans(clusterCount, svMeans
 * Step 3: Cluster-level manipulation of the initial results. The function manipulateClusters.m can be used multiple times. retainLargeClumps.m removes small, disconnected
 supervoxels in individual clusters because they are more likely to represent mistakes. The remaining 'cleaned-up' clusters can be used as seed clusters in further clustering.
 
-Example: remove cluster 5, split clusters 1 and 9 into 2, merge clusters 15 and 16, and merge clusters 13 and 18.
+Example: remove cluster 5, split clusters 1 and 9 into 2, merge clusters 15 and 16, and merge clusters 13 and 18. 'index' holds the partitioning.
 
-'index' holds the partitioning.
-
-   manipulationSets.removalSet = [5]; manipulationSets.splitSet = [1 9]; manipulationSets.splitCount = 2; manipulationSets.mergeSets = {[15 16], [13 18]}; 
-
-   index = snrAwareUserInteraction(index, manipulationSets, graphData.colorData, opts_fkmeans);
+---manipulationSets.removalSet = [5]; manipulationSets.splitSet = [1 9]; manipulationSets.splitCount = 2; manipulationSets.mergeSets = {[15 16], [13 18]}; 
+---index = snrAwareUserInteraction(index, manipulationSets, graphData.colorData, opts_fkmeans);
