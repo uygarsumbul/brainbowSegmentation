@@ -86,7 +86,6 @@ if ~weight
     while any(label ~= last) & iter<maxIter
         % remove empty clusters
         [~,~,label] = unique(label);
-        label = label';
         % transform label into indicator matrix
         ind = sparse(label,1:n,1,k,n,n);
         % compute centroid of each cluster
@@ -94,8 +93,9 @@ if ~weight
         % compute distance of every point to each centroid
         distances = bsxfun(@minus,centroid*X',0.5*sum(centroid.^2,2));
         % assign points to their nearest centroid
-        last = label';
+        last = label;
         [~,label] = max(distances);
+        label = label';
         iter = iter + 1;
     end
     dis = ind*(sum(X.^2,2) - 2*max(distances)');
@@ -105,7 +105,6 @@ else
     while any(label ~= last) & iter<maxIter
         % remove empty clusters
         [~,~,label] = unique(label);
-        label = label';
         % transform label into indicator matrix
         ind = sparse(label,1:n,weight,k,n,n);
         % compute centroid of each cluster
@@ -113,8 +112,9 @@ else
         % compute distance of every point to each centroid
         distances = bsxfun(@minus,centroid*X',0.5*sum(centroid.^2,2));
         % assign points to their nearest centroid
-        last = label';
+        last = label;
         [~,label] = max(distances);
+        label = label';
         iter = iter + 1;
 end
 dis = ind*(sum(X.^2,2) - 2*max(distances)');
