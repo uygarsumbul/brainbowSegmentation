@@ -7,8 +7,8 @@ superVoxelOpts.splitHardSVopts.subdivisionSizeThreshold  = 50;
 superVoxelOpts.removeSmallComponents.minVoxelCount       = 20; %100;
 superVoxelOpts.removeSmallComponents.moiRatioThreshold   = 3;
 superVoxelOpts.removeSmallComponents.zAnisotropy         = 3;
-superVoxelOpts.processLoneSuperVoxels.colorSim           = 5;
-superVoxelOpts.processLoneSuperVoxels.larsThreshold      = 0.2;
+% superVoxelOpts.processLoneSuperVoxels.colorSim           = 5;   % obsolete
+% superVoxelOpts.processLoneSuperVoxels.larsThreshold      = 0.2; % obsolete
 superVoxelOpts.dataset                                   = '~/bb/data/dcai_brainbow2_bm4d_sigma2000.mat';
 superVoxelOpts.filePreamble                              = 'sv_dcai2_sigma2000_hmin26_0.008_26n_split5e-11_smallCompsRemoved';
 load(superVoxelOpts.dataset); bbVol(bbVol<0)=0;
@@ -89,8 +89,8 @@ save(fileName, 'superVoxelOpts', 'superVoxelCells', 'superVoxelMeans', 'boundary
 cd ~/bb;
 disp('CALCULATING SUPERVOXEL AFFINITIES IN SPACE');
 tic; sAff = calculate_sAff(cc, boundaryVoxelsSub, superVoxelOpts.spatialDistanceCalculationOpts); toc;
-disp('CALCULATING SUPERVOXEL AFFINITIES IN COLOR');
-tic; cAff = calculate_cAff(cc, superVoxelMeans, superVoxelOpts.colorDistanceUpperBound); toc;
+% disp('CALCULATING SUPERVOXEL AFFINITIES IN COLOR');                                           % obsolete
+% tic; cAff = calculate_cAff(cc, superVoxelMeans, superVoxelOpts.colorDistanceUpperBound); toc; % obsolete
 disp('SAVING');
 cd ~/bb/data;
 fileName = [superVoxelOpts.filePreamble '_aff.mat'];
