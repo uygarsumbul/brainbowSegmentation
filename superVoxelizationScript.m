@@ -52,17 +52,17 @@ boundaryVoxelsSub          = cell(1, cc);
 tic;
 parfor kk = 1:cc
   [xx,yy,zz]               = ind2sub(stackSize, superVoxelCells{kk});
-  xSub                     = min(xx)-1;
-  ySub                     = min(yy)-1;
-  zSub                     = min(zz)-1;
+  xSub                     = min(xx)-2;
+  ySub                     = min(yy)-2;
+  zSub                     = min(zz)-2;
   xx                       = xx-xSub;
   yy                       = yy-ySub;
   zz                       = zz-zSub;
   maxxx                    = max(xx);
   maxyy                    = max(yy);
   maxzz                    = max(zz);
-  tmp                      = false(maxxx, maxyy, maxzz);
-  reducedIndices           = sub2ind([maxxx, maxyy, maxzz], xx, yy, zz);
+  tmp                      = false(maxxx+1, maxyy+1, maxzz+1);
+  reducedIndices           = sub2ind([maxxx+1, maxyy+1, maxzz+1], xx, yy, zz);
   tmp(reducedIndices)      = true;
   localBoundaryVoxels      = find(tmp & ~imerode(tmp, ones(3,3,3)));
   if ~isempty(localBoundaryVoxels)

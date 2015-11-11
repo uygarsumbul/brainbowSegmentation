@@ -57,7 +57,7 @@ end
 parfor kk1 = 1:cc
  for mm = 1:numel(potentialNeighbors{kk1})
   kk2 = potentialNeighbors{kk1}(mm);
-  if sum(min([minXYZ(kk1,:)-minXYZ(kk2,:); minXYZ(kk1,:)-maxXYZ(kk2,:); maxXYZ(kk1,:)-minXYZ(kk2,:); maxXYZ(kk1,:)-maxXYZ(kk2,:)].^2))<squaredThreshold
+  if sum( ( (minXYZ(kk1,:)-maxXYZ(kk2,:)).*(maxXYZ(kk2,:)<minXYZ(kk1,:)) + (minXYZ(kk2,:)-maxXYZ(kk1,:)).*(maxXYZ(kk1,:)<minXYZ(kk2,:)) ).^2 )<squaredThreshold
    if size(boundaryVoxelsSub{kk1},1)*size(boundaryVoxelsSub{kk2},1)<1e3
     sVal = 1/min(min(pdist2(boundaryVoxelsSub{kk1}, boundaryVoxelsSub{kk2})));
    else
