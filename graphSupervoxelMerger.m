@@ -33,7 +33,11 @@ while osFactor>opts.minOverSegmentingFactor % & ccOLD~=cc
   osFactorLog(end+1)                           = osFactor;
   disp([cc osFactorLog(end)])
   osFactor                                     = nextOsFactor;
-  fileName = ['/home/uygar/bb/data/iSTSM_sv_dcai2_sigma2000_hmin26_0.008_26n_split5e-11_sCR_iter' num2str(numel(ccLog)-1) '.mat'];
+  if isfield(opts, 'saveFileName')
+    fileName = [opts.saveFileName '_iter' num2str(numel(ccLog)-1) '.mat'];
+  else
+    fileName = ['/home/uygar/bb/data/iSTSM_sv_dcai2_sigma2000_hmin26_0.008_26n_split5e-11_sCR_iter' num2str(numel(ccLog)-1) '.mat'];
+  end
   save(fileName, 'ccLog', 'osFactorLog', 'opts', 'square_sAff', 'svCells', 'svMeans', 'voxelCounts', 'origIndex', '-v7.3');
 end
 

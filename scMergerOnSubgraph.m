@@ -27,7 +27,7 @@ while osFactor>minOsFactor & ccOLD~=cc
   doSpectralSplit                                            = (osFactor<=opts.maxOsFactorForSC);
   opts.fkmeans.weight                                        = voxelCounts;
   index                                                      = snrAwareKmeans(round(osFactor*K_vdpgm), colorData, opts.fkmeans);
-  [square_sAff, svMeans, svCells, voxelCounts, idxTransform] = mergeConnComp2(index, square_sAff, svMeans, svCells, voxelCounts, opts, connTh, doSpectralSplit);
+  [square_sAff, svMeans, svCells, voxelCounts, idxTransform] = mergeConnComp3(index, square_sAff, svMeans, svCells, voxelCounts, opts, connTh, doSpectralSplit);
   origIndex                                                  = idxTransform(origIndex);
   ccOLD                                                      = cc;
   cc                                                         = numel(svCells);
