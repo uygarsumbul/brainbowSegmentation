@@ -1,4 +1,5 @@
 % script for reconstructing a single neuron
+% dependencies: denoise_bm4d, singleNeuronReconstruction
 % must be passed imgFilePath
 % must be passed threshold (0-1)
 % must be passed sigma
