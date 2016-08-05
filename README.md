@@ -1,5 +1,9 @@
 # Welcome
 ## Overview
+* RUN mainScript.m
+* -------------------------------------------------------
+* -------------------------------------------------------
+
 * A presentation on the basics of the approach is available here: http://www.stat.columbia.edu/~uygar/dapg2015verbose.pdf
 
 * denoisingScript: denoise brainbow stack
