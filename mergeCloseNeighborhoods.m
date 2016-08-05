@@ -1,6 +1,5 @@
-function [square_sAff, svMeans, svCells, voxelCounts, origIndex] = mergeSmallSuperVoxels(square_sAff, svMeans, svCells, voxelCounts, origIndex, opts)
+function [square_sAff, svMeans, svCells, voxelCounts, origIndex] = mergeCloseNeighborhoods(square_sAff, svMeans, svCells, voxelCounts, origIndex, opts)
 
-% opts.luvColorDistanceUpperBound = 10; opts.disconnectedSVsizeTh = 20;
 svMeansNorm                                 = svMeans ./ repmat(sqrt(sum(svMeans.^2, 2)), 1, size(svMeans, 2));
 allTriplets                                 = nchoosek(1:size(svMeans, 2), 3);
 allColors                                   = zeros(size(svMeans, 1), 3*size(allTriplets, 1));
@@ -9,26 +8,19 @@ for kk = 1:size(allTriplets, 1)
 end
 [coeff,score,latent]                        = pca(allColors);
 svMeansNormLUV                              = score(:, 1:size(svMeans, 2));
-voxelCounts                                 = voxelCounts(:);
-Mdl                                         = KDTreeSearcher(svMeansNormLUV);
-binsaff                                     = (square_sAff>0.5);
+binsaff                                     = (square_sAff>1/(sqrt(3)+1e-5));
 xx                                          = zeros(nnz(binsaff), 1);
 yy                                          = xx;
 idx                                         = 1;
-cc                                          = size(svMeansNormLUV, 1);
-smallSVs                                    = find(voxelCounts<opts.disconnectedSVsizeTh);
-for smallSV = 1:numel(smallSVs) % VERY INEFFICIENT
-  kk                                        = smallSVs(smallSV);
-  [colorNeighborsCell, Dcell]               = rangesearch(Mdl, svMeansNormLUV(kk, :), opts.luvColorDistanceUpperBound);
-  colorNeighbors                            = colorNeighborsCell{1}(2:end);
-  D                                         = Dcell{1}(2:end);
-  [colorNeighbors, ia, ~]                   = intersect(colorNeighbors, find(binsaff(kk, :)));
-  D                                         = D(ia);
-  [~, pos]                                  = min(D);
-  if ~isempty(pos)
-    yy(idx)                                 = colorNeighbors(pos);
-    xx(idx)                                 = kk;
-    idx                                     = idx + 1;
+cc                                          = size(svMeans, 1);
+voxelCounts                                 = voxelCounts(:);
+
+for kk = 1:cc
+  neighbors = find(binsaff(kk, :));
+  if numel(neighbors)>1 && max(pdist(svMeansNormLUV(neighbors, :)))<opts.maxDistNormLUV
+    xx(idx:idx+numel(neighbors)-1)          = kk;
+    yy(idx:idx+numel(neighbors)-1)          = neighbors;
+    idx                                     = idx + numel(neighbors);
   end
 end
 xx(idx:end)                                 = [];
@@ -68,3 +60,4 @@ square_sAff         = sparse(newRows, newCols, newVals, S, S);
 square_sAff         = square_sAff + transpose(square_sAff);
 
 origIndex           = C(origIndex);
+
