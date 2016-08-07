@@ -21,15 +21,7 @@ for kk = 1:numel(graphData.smallSVs)
   colorNeighbors = [];
   D = [];
   if ismember(kk1, pure)
-    radiusExpansion                          = 0;
-    while true
-      [colorNeighbors, D]                    = rangesearch(Mdl,graphData.colorsForDistal(kk1, :),(radiusExpansion+graphData.colorRadiusForPure)*sqrt(ch/4));
-      if numel(colorNeighbors{1})>graphData.minEdgeCountForPure | radiusExpansion>graphData.maxColorRadiusForPure-graphData.colorRadiusForPure % 15, 
-        break;
-      else
-        radiusExpansion                      = radiusExpansion + 1;
-      end
-    end
+    [colorNeighbors, D]                      = rangesearch(Mdl,graphData.colorsForDistal(kk1, :),graphData.colorRadiusForPure*sqrt(ch/4));
     colorNeighbors                           = pure(colorNeighbors{1}(2:end));
     sDist                                    = min(graphData.maxAssumedSdist, 1./graphData.square_sAff(kk1,colorNeighbors) - 1);
     D                                        = exp( -opts_recon.cFactor .* (D{1}(2:end).^2)) .* exp( -graphData.s .* (sDist.^2));

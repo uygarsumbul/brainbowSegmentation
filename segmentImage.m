@@ -1,4 +1,4 @@
-function [index, hardClusterStats] = segmentImage(fileName, graphData)
+function index = segmentImage(fileName, graphData)
 
 load(fileName);
 voxelCount                          = prod(stackSize);
@@ -49,8 +49,8 @@ for ii=1:size(topFewEigenvectors,1)
   topFewEigenvectors(ii,:)          = topFewEigenvectors(ii,:) / norm(topFewEigenvectors(ii,:));
 end
 distortion                          = 1e60;
-for kk = 1:1000
-  initialLabels                     = kmeans(graphData.colorsForDistal(toKeep, :), graphData.opts_irbleigs.K,'MaxIter',1000);
+for kk = 1:2000
+  initialLabels                     = kmeans(graphData.colorsForDistal(toKeep, :), graphData.opts_irbleigs.K,'MaxIter',2);
   [myIndex, myCentroids, myDisto]   = colorInitializedWeightedKmeans(topFewEigenvectors, graphData.opts_irbleigs.K, initialLabels, opts_fkmeans);
   if sum(myDisto)<distortion;  distortion = sum(myDisto); index_minCut=myIndex; end;
 end

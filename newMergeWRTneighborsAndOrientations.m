@@ -18,15 +18,15 @@ else
   colorData                                     = score(:, 1:size(svMeans, 2));
 end
 cc                                              = numel(svCells);
-binsaff_6n                                      = (square_sAff>1/(opts.sDist+eps));
+binsaff                                         = (square_sAff>1/(opts.sDist+eps));
 smallerSVs                                      = find(voxelCounts<1000);
-xx                                              = zeros(nnz(binsaff_6n)/2, 1);
+xx                                              = zeros(nnz(binsaff)/2, 1);
 yy                                              = xx;
 vv                                              = xx;
 idx                                             = 1;
 vvo                                             = vv;
 for kk = 1:cc
-  tmp                                           = kk+find(binsaff_6n(kk,kk+1:end));
+  tmp                                           = kk+find(binsaff(kk,kk+1:end));
   xx(idx:idx+numel(tmp)-1)                      = kk;
   yy(idx:idx+numel(tmp)-1)                      = tmp;
   vv(idx:idx+numel(tmp)-1)                      = pdist2(colorData(kk,:), colorData(tmp,:));
@@ -37,15 +37,15 @@ cAff                                            = sparse(xx, yy, vv, cc, cc);
 cAff                                            = cAff + cAff';
 oAff                                            = sparse(xx, yy, vvo, cc, cc);
 oAff                                            = oAff + oAff';
-xx                                              = zeros(nnz(binsaff_6n), 1);
+xx                                              = zeros(nnz(binsaff), 1);
 yy                                              = xx;
 idx                                             = 1;
 for mm = 1:numel(smallerSVs)
   kk                                            = smallerSVs(mm);
-  n6                                            = find(binsaff_6n(kk, :));
-  [tt1, pos6]                                   = min(cAff(kk, n6)); % if tt==0; disp([kk n6]); end;
-  bestNeighbor6                                 = n6(pos6);
-  if oAff(kk, bestNeighbor6)>opts.minDotProduct & tt1<opts.maxColorDist & ((voxelCounts(kk)>20 & voxelCounts(bestNeighbor6)>20) | binsaff_6n(kk, bestNeighbor6)>1/2)
+  neigh                                         = find(binsaff(kk, :));
+  [tt1, pos6]                                   = min(cAff(kk, neigh)); % if tt==0; disp([kk neigh]); end;
+  bestNeighbor6                                 = neigh(pos6);
+  if oAff(kk, bestNeighbor6)>opts.minDotProduct & tt1<opts.maxColorDist & ((voxelCounts(kk)>20 & voxelCounts(bestNeighbor6)>20) | binsaff(kk, bestNeighbor6)>1/2)
     xx(idx)                                     = kk;
     yy(idx)                                     = bestNeighbor6;
     idx                                         = idx + 1;
