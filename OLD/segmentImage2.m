@@ -1,9 +1,6 @@
 function [index, graphData] = segmentImage(fileName, graphData)
-load(fileName);
-%opts.spatialProximityRadius        = graphData.spatialNhoodRadius;
-%opts.minimalComponentSize          = graphData.minSizeForPure;
-%[square_sAff, svMeans, svCells, voxelCounts, svColorMins, svColorMaxs, ~] = removeSmallSupervoxels(square_sAff, svMeans, svCells, voxelCounts, svColorMins, svColorMaxs, 1, opts);
 
+load(fileName);
 voxelCount                          = prod(stackSize);
 load(superVoxelOpts.dataset); bbVol(bbVol<0)=0; for kk = 1:size(bbVol, 4); rawStack = bbVol(:,:,:,kk); rawStack = rawStack - min(rawStack(:)); rawStack = rawStack / max(rawStack(:)); bbVol(:,:,:,kk) = rawStack; end; clear rawStack;
 graphData.svCells                   = svCells;
@@ -44,7 +41,7 @@ for kk = 1:numel(svCells)
 end
 graphData.perims                    = perims;
 
-affinityMatrix                      = generateAffinityMatrix(graphData);
+affinityMatrix                      = generateAffinityMatrix2(graphData);
 nodeDegrees                         = sum(affinityMatrix);
 toRemove                            = find(nodeDegrees==0);
 toKeep                              = setdiff(1:numel(svCells), toRemove); if ~isempty(toRemove); disp(['toRemove count: ' num2str(numel(toRemove))]); end;
@@ -56,14 +53,13 @@ cc                                  = size(thisAffinityMatrix, 1);
 weightVector                        = full(sum(thisAffinityMatrix, 2));
 DD                                  = sparse(1:cc, 1:cc, 1./sqrt(sum(thisAffinityMatrix)+eps));
 [topFewEigenvectors, ss, PRGINF]    = irbleigs(opts_recon.sigma*DD + DD*thisAffinityMatrix*DD, graphData.opts_irbleigs);
-
 for ii=1:size(topFewEigenvectors,1)
   topFewEigenvectors(ii,:)          = topFewEigenvectors(ii,:) / norm(topFewEigenvectors(ii,:));
 end
 warning off;
 distortion                          = 1e60;
-for kk = 1:500
-  initialLabels                     = kmeans(graphData.colorsForDistal(toKeep, :), graphData.opts_irbleigs.K,'MaxIter',10);
+for kk = 1:1000
+  initialLabels                     = kmeans(graphData.colorsForDistal(toKeep, :), graphData.opts_irbleigs.K,'MaxIter',2);
   [myIndex, myCentroids, myDisto]   = colorInitializedWeightedKmeans(topFewEigenvectors, graphData.opts_irbleigs.K, initialLabels, opts_fkmeans);
   if sum(myDisto)<distortion;  distortion = sum(myDisto); index_minCut=myIndex; end;
 end

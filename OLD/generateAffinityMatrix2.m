@@ -23,7 +23,8 @@ for kk = 1:numel(graphData.smallSVs)
   if ismember(kk1, pure)
     [colorNeighbors, D]                      = rangesearch(Mdl,graphData.colorsForDistal(kk1, :),graphData.colorRadiusForPure*sqrt(ch/4));
     colorNeighbors                           = pure(colorNeighbors{1}(2:end));
-    D                                        = exp( -opts_recon.cFactor .* (D{1}(2:end).^2));
+    sDist                                    = min(graphData.maxAssumedSdist, 1./graphData.square_sAff(kk1,colorNeighbors) - 1);
+    D                                        = exp( -opts_recon.cFactor .* (D{1}(2:end).^2)) .* exp( -graphData.s .* (sDist.^2));
     ssNeighbors                              = find(graphData.square_sAff(kk1,:)>1/graphData.spatialNhoodRadius);
     ssNeighbors                              = setdiff(ssNeighbors, colorNeighbors);
     cDist                                    = pdist2(graphData.colorsForProximal(kk1, :), graphData.colorsForProximal(ssNeighbors, :));
@@ -32,7 +33,8 @@ for kk = 1:numel(graphData.smallSVs)
       ssNeighbors                            = ssNeighbors(validssNeighbors);
       cDist                                  = cDist(validssNeighbors);
       colorNeighbors                         = [colorNeighbors ssNeighbors];
-      D                                      = [D exp( -opts_recon.cFactor .* (cDist.^2))];
+      sDist                                  = min(graphData.maxAssumedSdist, 1./graphData.square_sAff(kk1,ssNeighbors) - 1);
+      D                                      = [D exp( -opts_recon.cFactor .* (cDist.^2)).*exp( -graphData.s .* (sDist.^2))];
     end
   else
     colorNeighbors                           = find(graphData.square_sAff(kk1,:)>1/graphData.spatialNhoodRadius);
@@ -52,7 +54,8 @@ for kk = 1:numel(graphData.smallSVs)
     end
     D                                        = [];
     if ~isempty(colorNeighbors)
-      D                                      = exp( -opts_recon.cFactor .* (cDist.^2));
+      sDist                                  = min(graphData.maxAssumedSdist, 1./graphData.square_sAff(kk1,colorNeighbors) - 1);
+      D                                      = exp( -opts_recon.cFactor .* (cDist.^2)) .* exp( -graphData.s .* (sDist.^2));
     end
   end
   xx_cAff(cIdx:cIdx+numel(colorNeighbors)-1) = kk1;

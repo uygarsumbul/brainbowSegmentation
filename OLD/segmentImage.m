@@ -1,9 +1,6 @@
-function [index, graphData] = segmentImage(fileName, graphData)
-load(fileName);
-%opts.spatialProximityRadius        = graphData.spatialNhoodRadius;
-%opts.minimalComponentSize          = graphData.minSizeForPure;
-%[square_sAff, svMeans, svCells, voxelCounts, svColorMins, svColorMaxs, ~] = removeSmallSupervoxels(square_sAff, svMeans, svCells, voxelCounts, svColorMins, svColorMaxs, 1, opts);
+function index = segmentImage(fileName, graphData)
 
+load(fileName);
 voxelCount                          = prod(stackSize);
 load(superVoxelOpts.dataset); bbVol(bbVol<0)=0; for kk = 1:size(bbVol, 4); rawStack = bbVol(:,:,:,kk); rawStack = rawStack - min(rawStack(:)); rawStack = rawStack / max(rawStack(:)); bbVol(:,:,:,kk) = rawStack; end; clear rawStack;
 graphData.svCells                   = svCells;
@@ -27,22 +24,14 @@ graphData.colorsForProximal         = score(:, 1:size(svMeans, 2));
 graphData.square_sAff               = square_sAff;
 graphData.svSizes                   = voxelCounts;
 graphData.smallSVs                  = 1:numel(svCells);
-
-normalizer                          = sqrt(sum(bbVol.^2, 4));
-perims                              = zeros(1,numel(svCells));
-for dd = 1:size(bbVol, 4)
-  bbVol(:,:,:,dd)                   = bbVol(:,:,:,dd) ./ normalizer;
-end; clear normalizer;
-for kk = 1:numel(svCells)
-  tmp                               = zeros(numel(svCells{kk}), size(bbVol, 4));
-  for dd = 1:size(bbVol, 4)
-    tmp(:, dd)                      = bbVol(svCells{kk} + (dd-1)*voxelCount);
-  end
-  for dd = 1:size(bbVol, 4)
-    perims(kk)                      = max(perims(kk), max(tmp(:,dd))-min(tmp(:,dd)));
+detcov                              = zeros(1,numel(svCells));
+for kk=1:numel(svCells)
+  if numel(svCells{kk})>1
+    tmp = []; for dd = 1:size(bbVol, 4); tmp = [tmp bbVol(svCells{kk} + (dd-1)*voxelCount)]; end; tmp = tmp ./ repmat(sqrt(sum(tmp.^2,2)),1,size(tmp,2)); detcov(kk) = det(cov(tmp));
   end
 end
-graphData.perims                    = perims;
+bbVol                               = bbVol(:,:,:,1:3);
+graphData.detcov                    = detcov;
 
 affinityMatrix                      = generateAffinityMatrix(graphData);
 nodeDegrees                         = sum(affinityMatrix);
@@ -56,14 +45,13 @@ cc                                  = size(thisAffinityMatrix, 1);
 weightVector                        = full(sum(thisAffinityMatrix, 2));
 DD                                  = sparse(1:cc, 1:cc, 1./sqrt(sum(thisAffinityMatrix)+eps));
 [topFewEigenvectors, ss, PRGINF]    = irbleigs(opts_recon.sigma*DD + DD*thisAffinityMatrix*DD, graphData.opts_irbleigs);
-
 for ii=1:size(topFewEigenvectors,1)
   topFewEigenvectors(ii,:)          = topFewEigenvectors(ii,:) / norm(topFewEigenvectors(ii,:));
 end
 warning off;
 distortion                          = 1e60;
-for kk = 1:500
-  initialLabels                     = kmeans(graphData.colorsForDistal(toKeep, :), graphData.opts_irbleigs.K,'MaxIter',10);
+for kk = 1:1000
+  initialLabels                     = kmeans(graphData.colorsForDistal(toKeep, :), graphData.opts_irbleigs.K,'MaxIter',2);
   [myIndex, myCentroids, myDisto]   = colorInitializedWeightedKmeans(topFewEigenvectors, graphData.opts_irbleigs.K, initialLabels, opts_fkmeans);
   if sum(myDisto)<distortion;  distortion = sum(myDisto); index_minCut=myIndex; end;
 end

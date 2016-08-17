@@ -1,0 +1,228 @@
+
+>> clear all
+>> cd ~/bb/brainbowSegmentation/
+>> superVoxelOpts.filePreamble                                              = '~/bb/data/dawen/supervoxels_dcai_PVhippo1_bm4d_sigma500_ws0.005_split1e-10_20_augmented0.1';
+>> superVoxelOpts.brightnessThreshold                                       = 0.1;
+>> superVoxelOpts.spatialDistanceCalculationOpts.upperBound                 = 2;
+>> superVoxelOpts.splitHardSVopts.detThreshold                              = 1e-10;
+>> superVoxelOpts.splitHardSVopts.connectivity                              = 26;
+>> superVoxelOpts.splitHardSVopts.subdivisionSizeThreshold                  = 20;
+>> superVoxelOpts.dataset                                                   = '~/bb/data/dcai_PVhippo1_bm4d_sigma500.mat';
+>> superVoxelOpts.HMINTH26                                                  = 0.005;
+>> supervoxelize(superVoxelOpts);
+BASIC WATERSHED
+Elapsed time is 123.375977 seconds.
+ASSIGN BOUNDARIES
+     2
+Elapsed time is 334.151454 seconds.
+SUPERVOXEL CELLS - 0 IS THE BACKGROUND, EVERYTHING ELSE IS A REGULAR SUPERVOXEL
+Elapsed time is 229.764369 seconds.
+SPLIT HARD SUPERVOXELS
+Elapsed time is 840.637283 seconds.
+       22809
+THRESHOLD AND WARP THE THRESHOLDED IMAGE INTO WATERSHED IMAGE
+Elapsed time is 1575.367649 seconds.
+GENERATE SUPERVOXELS FROM THE DIFFERENCE VOXELS AFTER WARPING AND ADD TO THE EXISTING LIST
+Elapsed time is 2.414885 seconds.
+       28055
+CALCULATE BOUNDARY VOXELS
+Starting parallel pool (parpool) using the 'local' profile ... connected to 4 workers.
+CALCULATE SPATIAL AFFINITIES
+Elapsed time is 240.219358 seconds.
+CALCULATE SUPERVOXEL MEANS
+Elapsed time is 1.286880 seconds.
+SAVE VARIABLES
+Elapsed time is 2.907580 seconds.
+
+
+
+>> clear all
+>> cd ~/bb/brainbowSegmentation/
+>> superVoxelOpts.filePreamble                                              = '~/bb/data/dawen/supervoxels_dcai_brainbow4channel_bm4d_sigma500_ws0.005_split1e-10_20_augmented0.1';
+>> superVoxelOpts.brightnessThreshold                                       = 0.1;
+>> superVoxelOpts.spatialDistanceCalculationOpts.upperBound                 = 2;
+>> superVoxelOpts.splitHardSVopts.detThreshold                              = 1e-10;
+>> superVoxelOpts.splitHardSVopts.connectivity                              = 26;
+>> superVoxelOpts.splitHardSVopts.subdivisionSizeThreshold                  = 20;
+>> superVoxelOpts.dataset                                                   = '~/bb/data/dcai_brainbow4channel_bm4d_sigma500.mat';
+>> superVoxelOpts.HMINTH26                                                  = 0.005;
+>> supervoxelize(superVoxelOpts);
+BASIC WATERSHED
+Elapsed time is 532.991733 seconds.
+ASSIGN BOUNDARIES
+     2
+Elapsed time is 1344.782499 seconds.
+SUPERVOXEL CELLS - 0 IS THE BACKGROUND, EVERYTHING ELSE IS A REGULAR SUPERVOXEL
+Elapsed time is 855.440906 seconds.
+SPLIT HARD SUPERVOXELS
+Elapsed time is 28.430074 seconds.
+       60342
+THRESHOLD AND WARP THE THRESHOLDED IMAGE INTO WATERSHED IMAGE
+Elapsed time is 4508.249768 seconds.
+GENERATE SUPERVOXELS FROM THE DIFFERENCE VOXELS AFTER WARPING AND ADD TO THE EXISTING LIST
+Elapsed time is 11.481713 seconds.
+       76878
+CALCULATE BOUNDARY VOXELS
+Starting parallel pool (parpool) using the 'local' profile ... connected to 4 workers.
+CALCULATE SPATIAL AFFINITIES
+Elapsed time is 1190.931630 seconds.
+CALCULATE SUPERVOXEL MEANS
+Elapsed time is 3.468134 seconds.
+SAVE VARIABLES
+Elapsed time is 7.118724 seconds.
+
+
+
+>> superVoxelOpts.filePreamble                                              = '~/bb/data/dawen/supervoxels_dcai_PVhippo1_bm4d_sigma500_ws0.005_split5e-11_30_augmented0.1';
+>> superVoxelOpts.brightnessThreshold                                       = 0.1;
+>> superVoxelOpts.spatialDistanceCalculationOpts.upperBound                 = 2;
+>> superVoxelOpts.splitHardSVopts.detThreshold                              = 5e-11;
+>> superVoxelOpts.splitHardSVopts.connectivity                              = 26;
+>> superVoxelOpts.splitHardSVopts.subdivisionSizeThreshold                  = 30;
+>> superVoxelOpts.dataset                                                   = '~/bb/data/dcai_PVhippo1_bm4d_sigma500.mat';
+>> superVoxelOpts.HMINTH26                                                  = 0.005;
+>> supervoxelize(superVoxelOpts);
+BASIC WATERSHED
+Elapsed time is 63.002112 seconds.
+ASSIGN BOUNDARIES
+     2
+Elapsed time is 297.645336 seconds.
+SUPERVOXEL CELLS - 0 IS THE BACKGROUND, EVERYTHING ELSE IS A REGULAR SUPERVOXEL
+Elapsed time is 221.403721 seconds.
+SPLIT HARD SUPERVOXELS
+Elapsed time is 872.537331 seconds.
+       23728
+THRESHOLD AND WARP THE THRESHOLDED IMAGE INTO WATERSHED IMAGE
+Elapsed time is 1600.035277 seconds.
+GENERATE SUPERVOXELS FROM THE DIFFERENCE VOXELS AFTER WARPING AND ADD TO THE EXISTING LIST
+Elapsed time is 2.489652 seconds.
+       29086
+CALCULATE BOUNDARY VOXELS
+Starting parallel pool (parpool) using the 'local' profile ... connected to 4 workers.
+CALCULATE SPATIAL AFFINITIES
+Elapsed time is 269.057266 seconds.
+CALCULATE SUPERVOXEL MEANS
+Elapsed time is 2.719521 seconds.
+SAVE VARIABLES
+Elapsed time is 5.325293 seconds.
+
+
+
+
+
+superVoxelOpts.filePreamble                                              = '~/bb/data/dawen/supervoxels_dcai_PVhippo1_bm4d_sigma500_ws0.005_isplit0.6_30_augmented0.1';
+superVoxelOpts.brightnessThreshold                                       = 0.1;
+superVoxelOpts.spatialDistanceCalculationOpts.upperBound                 = 2;
+superVoxelOpts.splitInconsistentSVopts.maxPerimeter                      = 0.6;
+superVoxelOpts.splitInconsistentSVopts.connectivity                      = 26;
+superVoxelOpts.splitInconsistentSVopts.subdivisionSizeThreshold          = 30;
+superVoxelOpts.dataset                                                   = '~/bb/data/dcai_PVhippo1_bm4d_sigma500.mat';
+superVoxelOpts.HMINTH26                                                  = 0.005;
+supervoxelize2(superVoxelOpts);
+BASIC WATERSHED
+Elapsed time is 63.699867 seconds.
+ASSIGN BOUNDARIES
+     2
+Elapsed time is 293.169792 seconds.
+SUPERVOXEL CELLS - 0 IS THE BACKGROUND, EVERYTHING ELSE IS A REGULAR SUPERVOXEL
+Elapsed time is 134.147114 seconds.
+SPLIT HARD SUPERVOXELS
+Elapsed time is 1361.547304 seconds.
+       25157
+THRESHOLD AND WARP THE THRESHOLDED IMAGE INTO WATERSHED IMAGE
+Elapsed time is 1308.290596 seconds.
+GENERATE SUPERVOXELS FROM THE DIFFERENCE VOXELS AFTER WARPING AND ADD TO THE EXISTING LIST
+Elapsed time is 1.934513 seconds.
+       30041
+CALCULATE BOUNDARY VOXELS
+Starting parallel pool (parpool) using the 'local' profile ... connected to 4 workers.
+CALCULATE SPATIAL AFFINITIES
+Elapsed time is 337.299824 seconds.
+CALCULATE SUPERVOXEL MEANS
+Elapsed time is 1.341876 seconds.
+SAVE VARIABLES
+Elapsed time is 2.306154 seconds.
+
+
+>> superVoxelOpts.filePreamble                                              = '~/bb/data/dawen/supervoxels3_dcai_PVhippo1_bm4d_sigma500_ws0.004_isplit0.4_20_augmented0.1';
+>> superVoxelOpts.brightnessThreshold                                       = 0.1;
+>> superVoxelOpts.spatialDistanceCalculationOpts.upperBound                 = 2;
+>> superVoxelOpts.splitInconsistentSVopts.maxPerimeter                      = 0.4;
+>> superVoxelOpts.splitInconsistentSVopts.connectivity                      = 26;
+>> superVoxelOpts.splitInconsistentSVopts.subdivisionSizeThreshold          = 20;
+>> superVoxelOpts.dataset                                                   = '~/bb/data/dcai_PVhippo1_bm4d_sigma500.mat';
+>> superVoxelOpts.HMINTH26                                                  = 0.004;
+>> supervoxelize3(superVoxelOpts);
+BASIC WATERSHED
+Elapsed time is 65.385277 seconds.
+ASSIGN BOUNDARIES
+     2
+Elapsed time is 318.618083 seconds.
+SUPERVOXEL CELLS - 0 IS THE BACKGROUND, EVERYTHING ELSE IS A REGULAR SUPERVOXEL
+Elapsed time is 176.853299 seconds.
+SPLIT HARD SUPERVOXELS
+Elapsed time is 1315.834799 seconds.
+       44945
+UPDATE L
+Elapsed time is 0.088117 seconds.
+THRESHOLD AND WARP THE THRESHOLDED IMAGE INTO WATERSHED IMAGE
+Elapsed time is 1132.195665 seconds.
+CALCULATE SUPERVOXEL MEANS
+Elapsed time is 2.048080 seconds.
+GENERATE SUPERVOXELS FROM THE DIFFERENCE VOXELS AFTER WARPING AND ADD TO THE EXISTING LIST
+SPLIT HARD SUPERVOXELS
+Elapsed time is 5.695464 seconds.
+       47526
+CALCULATE BOUNDARY VOXELS
+Starting parallel pool (parpool) using the 'local' profile ... connected to 4 workers.
+CALCULATE SPATIAL AFFINITIES
+Elapsed time is 617.176507 seconds.
+CALCULATE SUPERVOXEL MEANS
+Elapsed time is 2.087401 seconds.
+CALCULATE SUPERVOXEL COLOR EXTREMES
+Elapsed time is 2.509397 seconds.
+SAVE VARIABLES
+Elapsed time is 3.964171 seconds.
+
+
+
+cd ~/bb/brainbowSegmentation/
+>> superVoxelOpts.filePreamble                                              = '~/bb/data/dawen/supervoxels3_dcai_brainbow4channel_bm4d_sigma500_ws0.006_isplit0.5_20_augmented0.1';
+>> superVoxelOpts.brightnessThreshold                                       = 0.1;
+>> superVoxelOpts.spatialDistanceCalculationOpts.upperBound                 = 2;
+>> superVoxelOpts.splitInconsistentSVopts.maxPerimeter                      = 0.5;
+>> superVoxelOpts.splitInconsistentSVopts.connectivity                      = 26;
+>> superVoxelOpts.splitInconsistentSVopts.subdivisionSizeThreshold          = 20;
+>> superVoxelOpts.dataset                                                   = '~/bb/data/dcai_brainbow4channel_bm4d_sigma500.mat';
+>> superVoxelOpts.HMINTH26                                                  = 0.006;
+>> supervoxelize3(superVoxelOpts);
+BASIC WATERSHED
+Elapsed time is 516.551312 seconds.
+ASSIGN BOUNDARIES
+     2
+Elapsed time is 706.572478 seconds.
+SUPERVOXEL CELLS - 0 IS THE BACKGROUND, EVERYTHING ELSE IS A REGULAR SUPERVOXEL
+Elapsed time is 558.566356 seconds.
+SPLIT HARD SUPERVOXELS
+Elapsed time is 50.813458 seconds.
+       57535
+UPDATE L
+Elapsed time is 0.182621 seconds.
+THRESHOLD AND WARP THE THRESHOLDED IMAGE INTO WATERSHED IMAGE
+Elapsed time is 5366.454866 seconds.
+CALCULATE SUPERVOXEL MEANS
+Elapsed time is 2.643318 seconds.
+GENERATE SUPERVOXELS FROM THE DIFFERENCE VOXELS AFTER WARPING AND ADD TO THE EXISTING LIST
+SPLIT HARD SUPERVOXELS
+Elapsed time is 26.820437 seconds.
+       62127
+CALCULATE BOUNDARY VOXELS
+Starting parallel pool (parpool) using the 'local' profile ... connected to 4 workers.
+CALCULATE SPATIAL AFFINITIES
+Elapsed time is 813.614432 seconds.
+CALCULATE SUPERVOXEL MEANS
+Elapsed time is 2.786567 seconds.
+CALCULATE SUPERVOXEL COLOR EXTREMES
+Elapsed time is 8.764698 seconds.
+SAVE VARIABLES
+Elapsed time is 5.463925 seconds.

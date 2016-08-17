@@ -34,14 +34,7 @@ superVoxelCells{end}                                                     = sorte
 toc;
 tic;disp('SPLIT HARD SUPERVOXELS');
 superVoxelCells                                                          = splitInconsistentSuperVoxels(superVoxelOpts.splitInconsistentSVopts, superVoxelCells, bbVol);
-svCount                                                                  = numel(superVoxelCells);
 toc; disp(numel(superVoxelCells)); % L NEEDS UPDATING IF YOU WANT TO USE IT FURTHER BEYOND FOREGROUND/BACKGROUND DETECTION
-tic; disp('UPDATE L');
-L                                                                        = zeros(size(L));
-for sv = 1:svCount
-  L(superVoxelCells{sv})                                                 = sv;
-end
-toc;
 tic;disp('THRESHOLD AND WARP THE THRESHOLDED IMAGE INTO WATERSHED IMAGE')
 voxelNorms                                                               = sqrt(sum(bbVol.^2,4));
 proposal                                                                 = (voxelNorms>superVoxelOpts.brightnessThreshold);
@@ -50,54 +43,14 @@ voxelNorms(~proposal)                                                    = 0;
 voxelNorms                                                               = sparse(voxelNorms(:));
 proposal                                                                 = topologyPreservingVolumeShrinkerWithPreference6(proposal, L>0, 30, voxelNorms);
 toc;
-tic;disp('CALCULATE SUPERVOXEL MEANS')
-superVoxelMeans                                                          = zeros(svCount, channelCount);
-for kk = 1:svCount
-  thisSVcolors                                                           = zeros(numel(superVoxelCells{kk}), channelCount);
-  for dd = 1:channelCount
-    thisSVcolors(:, dd)                                                  = bbVol(superVoxelCells{kk} + (dd-1)*voxelCount);
-  end
-  superVoxelMeans(kk,:)                                                  = mean(thisSVcolors, 1);
-end
-superVoxelMeansNorm                                                      = superVoxelMeans ./ repmat(sqrt(sum(superVoxelMeans.^2, 2)), 1, size(superVoxelMeans, 2));
-toc;
 tic;disp('GENERATE SUPERVOXELS FROM THE DIFFERENCE VOXELS AFTER WARPING AND ADD TO THE EXISTING LIST');
 CC                                                                       = bwconncomp(proposal & L==0, 26);
+additionalSupervoxels                                                    = cell(1, CC.NumObjects);
 for kk = 1:CC.NumObjects
-  thisVox                                                                = CC.PixelIdxList{kk};
-  thisSVcolors                                                           = zeros(numel(thisVox), channelCount);
-  for dd = 1:channelCount
-    thisSVcolors(:, dd)                                                  = bbVol(thisVox + (dd-1)*voxelCount);
-  end
-  thisColor                                                              = mean(thisSVcolors, 1);
-  thisColor                                                              = thisColor/norm(thisColor);
-  [xx,yy,zz]                                                             = ind2sub(stackSize, thisVox);
-  xSub                                                                   = max(0, min(xx)-2);
-  ySub                                                                   = max(0, min(yy)-2);
-  zSub                                                                   = max(0, min(zz)-2);
-  xx                                                                     = xx-xSub;
-  yy                                                                     = yy-ySub;
-  zz                                                                     = zz-zSub;
-  maxxx                                                                  = max(xx);
-  maxyy                                                                  = max(yy);
-  maxzz                                                                  = max(zz);
-  xLen                                                                   = min(stackSize(1)-xSub,maxxx+1);
-  yLen                                                                   = min(stackSize(2)-ySub,maxyy+1);
-  zLen                                                                   = min(stackSize(3)-zSub,maxzz+1);
-  tmp                                                                    = false(xLen, yLen, zLen);
-  reducedIndices                                                         = sub2ind([xLen, yLen, zLen], xx, yy, zz);
-  tmp(reducedIndices)                                                    = true;
-  localDilate                                                            = find(imdilate(tmp, true(3,3,3)));
-  [xx,yy,zz]                                                             = ind2sub(size(tmp), localDilate);
-  expandedIdx                                                            = sub2ind(stackSize, xx+xSub, yy+ySub, zz+zSub);
-  candidates                                                             = setdiff(unique(L(expandedIdx)), 0);
-  if ~isempty(candidates)
-    [mini, pos]                                                          = min(pdist2(thisColor, superVoxelMeansNorm(candidates, :)));
-    superVoxelCells{candidates(pos)}                                     = [superVoxelCells{candidates(pos)}; thisVox];
-  end
+  additionalSupervoxels{kk}                                              = CC.PixelIdxList{kk};
 end
-tic;disp('SPLIT HARD SUPERVOXELS');
-superVoxelCells                                                          = splitInconsistentSuperVoxels(superVoxelOpts.splitInconsistentSVopts, superVoxelCells, bbVol);
+additionalSupervoxels                                                    = splitInconsistentSuperVoxels(superVoxelOpts.splitInconsistentSVopts, additionalSupervoxels, bbVol);
+superVoxelCells                                                          = [superVoxelCells additionalSupervoxels];
 svCount                                                                  = numel(superVoxelCells);
 toc; disp(svCount);
 tic;disp('CALCULATE BOUNDARY VOXELS');

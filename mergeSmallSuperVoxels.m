@@ -1,4 +1,4 @@
-function [square_sAff, svMeans, svCells, voxelCounts, origIndex] = mergeSmallSuperVoxels(square_sAff, svMeans, svCells, voxelCounts, origIndex, opts)
+function [square_sAff, svMeans, svCells, voxelCounts, svColorMins, svColorMaxs, origIndex] = mergeSmallSuperVoxels(square_sAff, svMeans, svCells, voxelCounts, svColorMins, svColorMaxs, origIndex, opts)
 
 % opts.luvColorDistanceUpperBound = 10; opts.disconnectedSVsizeTh = 20;
 svMeansNorm                                 = svMeans ./ repmat(sqrt(sum(svMeans.^2, 2)), 1, size(svMeans, 2));
@@ -25,8 +25,10 @@ for smallSV = 1:numel(smallSVs) % VERY INEFFICIENT
   [colorNeighbors, ia, ~]                   = intersect(colorNeighbors, find(binsaff(kk, :)));
   D                                         = D(ia);
   [~, pos]                                  = min(D);
-  if ~isempty(pos)
-    yy(idx)                                 = colorNeighbors(pos);
+  bestN                                     = colorNeighbors(pos);
+  maxVoxColorDist                           = max(max(svColorMaxs([kk bestN], :), [], 1) - min(svColorMins([kk bestN], :), [], 1));
+  if ~isempty(pos) && maxVoxColorDist<opts.maxVoxColorDist
+    yy(idx)                                 = bestN;
     xx(idx)                                 = kk;
     idx                                     = idx + 1;
   end
@@ -36,35 +38,41 @@ yy(idx:end)                                 = [];
 binsaff                                     = sparse(xx, yy, 1, cc, cc);
 [S,C]                                       = graphconncomp(binsaff, 'Weak', true);
 
-newsvCells          = cell(1, S);
-newsvMeans          = zeros(S, size(svMeans, 2));
+newsvCells              = cell(1, S);
+newsvMeans              = zeros(S, size(svMeans, 2));
+newsvColorMins          = zeros(S, size(svMeans, 2));
+newsvColorMaxs          = zeros(S, size(svMeans, 2));
 for kk = 1:S
-  thisConnComp      = find(C==kk);
-  newsvCells{kk}    = cell2mat(svCells(thisConnComp)');
-  newsvMeans(kk, :) = voxelCounts(thisConnComp)' * svMeans(thisConnComp, :) / sum(voxelCounts(thisConnComp));
+  thisConnComp          = find(C==kk);
+  newsvCells{kk}        = cell2mat(svCells(thisConnComp)');
+  newsvMeans(kk, :)     = voxelCounts(thisConnComp)' * svMeans(thisConnComp, :) / sum(voxelCounts(thisConnComp));
+  newsvColorMins(kk, :) = min(svColorMins(thisConnComp, :), [], 1);
+  newsvColorMaxs(kk, :) = max(svColorMaxs(thisConnComp, :), [], 1);
 end
-svCells             = newsvCells;
-svMeans             = newsvMeans;
-voxelCounts         = cellfun(@numel, newsvCells);
+svCells                 = newsvCells;
+svMeans                 = newsvMeans;
+svColorMins             = newsvColorMins;
+svColorMaxs             = newsvColorMaxs;
+voxelCounts             = cellfun(@numel, newsvCells);
 
-[row, col, val]     = find(square_sAff);
-row                 = C(row);
-col                 = C(col);
-upper               = find(row<=col);
-row(upper)          = [];
-col(upper)          = [];
-val(upper)          = [];
+[row, col, val]         = find(square_sAff);
+row                     = C(row);
+col                     = C(col);
+upper                   = find(row<=col);
+row(upper)              = [];
+col(upper)              = [];
+val(upper)              = [];
 
-ff                  = max(row)+1;
-id                  = row + col*ff;
-[uniqueid, ia, ~]   = unique(id);
-newRows             = row(ia);
-newCols             = col(ia);
-newVals             = zeros(size(newRows));
+ff                      = max(row)+1;
+id                      = row + col*ff;
+[uniqueid, ia, ~]       = unique(id);
+newRows                 = row(ia);
+newCols                 = col(ia);
+newVals                 = zeros(size(newRows));
 parfor kk = 1:numel(uniqueid)
-  newVals(kk)       = max(val(id==uniqueid(kk)));
+  newVals(kk)           = max(val(id==uniqueid(kk)));
 end
-square_sAff         = sparse(newRows, newCols, newVals, S, S);
-square_sAff         = square_sAff + transpose(square_sAff);
+square_sAff             = sparse(newRows, newCols, newVals, S, S);
+square_sAff             = square_sAff + transpose(square_sAff);
 
-origIndex           = C(origIndex);
+origIndex               = C(origIndex);
