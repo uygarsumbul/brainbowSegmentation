@@ -34,7 +34,7 @@ mergedSvFileName                    = '~/bb/data/dawen/merged_supervoxels3_dcai_
 %'~/bb/data/dawen/merged_supervoxels3_dcai_PVhippo1_bm4d_sigma500_ws0.006_isplit0.5_20_augmented0.1_minmax_demixFirst50_5_smallLast_maxCdist10_sAff10.mat';
 graphData.c                         = 2e-3;
 graphData.colorRadiusForPure        = 20;
-graphData.minSizeForPure            = 100;
+graphData.minSizeForPure            = 50;
 graphData.maxPerim                  = 0.4;
 graphData.spatialNhoodRadius        = sqrt(9)+eps;
 graphData.maxColorRadiusForProximal = 50;
